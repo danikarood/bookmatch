@@ -1,7 +1,7 @@
 //Signup page js
-function togglePassword(inputId, iconElement) {
+function togglePassword(inputId, btnElement) {
     const input = document.getElementById(inputId);
-    const icon = iconElement.querySelector('i');
+    const icon = btnElement.querySelector('i');
     
     if (input.type === "password") {
         input.type = "text";
