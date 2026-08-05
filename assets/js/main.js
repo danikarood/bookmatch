@@ -86,3 +86,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+//Community/ recommended books page js

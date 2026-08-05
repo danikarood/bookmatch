@@ -13,17 +13,17 @@ $books_data = [
     // Hidden Gems
     ["id" => 201, "title" => "The Atlas Six", "author" => "Olivie Blake", "genre" => "Fantasy", "rating" => 4.5, "is_owned" => false, "cover" => "The atlas six.jpg"],
     ["id" => 202, "title" => "The Song of Achilles", "author" => "Madeline Miller", "genre" => "Historical Fiction", "rating" => 4.7, "is_owned" => false, "cover" => "The song of achilles.jpg"],
-    ["id" => 203, "title" => "A Psalm for the Wild-Built", "author" => "T.K. Klune", "genre" => "Science Fiction", "rating" => 4.7, "is_owned" => false, "cover" => "A psalm for the wild-built.jpg"],
+    ["id" => 203, "title" => "A Psalm for the Wild-Built", "author" => "T.K. Klune", "genre" => "Science Fiction", "rating" => 4.7, "is_owned" => false, "cover" => "A psalm for the wild built.jpg"],
 
     // New Releases
     ["id" => 301, "title" => "The House in the Cerulean Sea", "author" => "Erin Morgenstern", "genre" => "Fantasy", "rating" => 4.5, "is_owned" => false, "cover" => "The house in the cerulean sea.jpg"],
-    ["id" => 302, "title" => "Legends & Lattes", "author" => "Travis Baldree", "genre" => "Fantasy", "rating" => 4.8, "is_owned" => false, "cover" => "Legends & lattes.jpg"],
+    ["id" => 302, "title" => "Legends & Lattes", "author" => "Travis Baldree", "genre" => "Fantasy", "rating" => 4.8, "is_owned" => false, "cover" => "Legends and lattes.jpg"],
     ["id" => 303, "title" => "The Familiar", "author" => "Leigh Bardugo", "genre" => "Historical Fantasy", "rating" => 4.7, "is_owned" => false, "cover" => "The familiar.jpg"],
     ["id" => 304, "title" => "Bury Our Bones in the Midnight Soil", "author" => "V.E. Schwab", "genre" => "Fantasy Horror", "rating" => 4.7, "is_owned" => false, "cover" => "Bury our bones in the midnight soil.jpg"],
 
     // Staff Picks
     ["id" => 401, "title" => "The Night Circus", "author" => "Erin Morgenstern", "genre" => "Fantasy", "rating" => 4.7, "is_owned" => false, "cover" => "The night circus.jpg"],
-    ["id" => 402, "title" => "Daisy Jones & The Six", "author" => "Taylor Jenkins Reid", "genre" => "Historical Fiction", "rating" => 4.6, "is_owned" => true, "cover" => "Daisy jones & the six.jpg"],
+    ["id" => 402, "title" => "Daisy Jones & The Six", "author" => "Taylor Jenkins Reid", "genre" => "Historical Fiction", "rating" => 4.6, "is_owned" => true, "cover" => "Daisy jones and the six.jpg"],
     ["id" => 403, "title" => "The Invisible Life of Addie LaRue", "author" => "V.E. Schwab", "genre" => "Fantasy", "rating" => 4.6, "is_owned" => false, "cover" => "The invisible life of addie larue.jpg"],
     ["id" => 404, "title" => "Lessons in Chemistry", "author" => "Bonnie Garmus", "genre" => "Historical Fiction", "rating" => 4.6, "is_owned" => false, "cover" => "Lessons in chemistry.jpg"],
     ["id" => 405, "title" => "The Priory of the Orange Tree", "author" => "Samantha Shannon", "genre" => "Fantasy", "rating" => 4.7, "is_owned" => false, "cover" => "The priory of the orange tree.jpg"],
@@ -35,7 +35,7 @@ $books_data = [
     ["id" => 503, "title" => "The Ballad of Never After", "author" => "Stephanie Garber", "genre" => "Fantasy", "rating" => 4.6, "is_owned" => false, "cover" => "The ballad of never after.jpg"],
     ["id" => 504, "title" => "They Both Die at the End", "author" => "Adam Silvera", "genre" => "Young Adult", "rating" => 4.6, "is_owned" => false, "cover" => "They both die at the end.jpg"],
     ["id" => 505, "title" => "Project Hail Mary", "author" => "Andy Weir", "genre" => "Science Fiction", "rating" => 4.8, "is_owned" => false, "cover" => "Project hail mary.jpg"],
-    ["id" => 506, "title" => "Seven Year Slip", "author" => "Ashley Poston", "genre" => "Romance", "rating" => 4.5, "is_owned" => false, "cover" => "Seven year slip.jpg"]
+    ["id" => 506, "title" => "Seven Year Slip", "author" => "Ashley Poston", "genre" => "Romance", "rating" => 4.5, "is_owned" => false, "cover" => "The seven year slip.jpg"]
 ];
 
 $total_books = count($books_data);
@@ -121,15 +121,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                 <a href="#" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
-                <?php 
-                foreach($trending_books as $b) {
-                    $title = $b['title']; 
-                    $author = $b['author']; 
-                    $rating = $b['rating']; 
-                    $image = '../assets/images/book-covers/' . $b['cover'];
-                    include '../components/book-card.php';
-                }
-                ?>
+                <?php foreach($trending_books as $b): ?>
+                    <div class="book-card">
+                        <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover']); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>" class="book-cover-img">
+                        <h4 class="book-title"><?php echo htmlspecialchars($b['title']); ?></h4>
+                        <p class="book-author"><?php echo htmlspecialchars($b['author']); ?></p>
+                        <div class="book-rating">
+                            <i class="fa-solid fa-star"></i> <span><?php echo htmlspecialchars($b['rating']); ?></span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </section>
 
@@ -140,15 +141,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                 <a href="#" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
-                <?php 
-                foreach($hidden_gems as $b) {
-                    $title = $b['title']; 
-                    $author = $b['author']; 
-                    $rating = $b['rating']; 
-                    $image = '../assets/images/book-covers/' . $b['cover'];
-                    include '../components/book-card.php';
-                }
-                ?>
+                <?php foreach($hidden_gems as $b): ?>
+                    <div class="book-card">
+                        <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover']); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>" class="book-cover-img">
+                        <h4 class="book-title"><?php echo htmlspecialchars($b['title']); ?></h4>
+                        <p class="book-author"><?php echo htmlspecialchars($b['author']); ?></p>
+                        <div class="book-rating">
+                            <i class="fa-solid fa-star"></i> <span><?php echo htmlspecialchars($b['rating']); ?></span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </section>
 
@@ -159,15 +161,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                 <a href="#" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
-                <?php 
-                foreach($new_releases as $b) {
-                    $title = $b['title']; 
-                    $author = $b['author']; 
-                    $rating = $b['rating']; 
-                    $image = '../assets/images/book-covers/' . $b['cover'];
-                    include '../components/book-card.php';
-                }
-                ?>
+                <?php foreach($new_releases as $b): ?>
+                    <div class="book-card">
+                        <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover']); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>" class="book-cover-img">
+                        <h4 class="book-title"><?php echo htmlspecialchars($b['title']); ?></h4>
+                        <p class="book-author"><?php echo htmlspecialchars($b['author']); ?></p>
+                        <div class="book-rating">
+                            <i class="fa-solid fa-star"></i> <span><?php echo htmlspecialchars($b['rating']); ?></span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </section>
 
@@ -178,15 +181,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                 <a href="#" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
-                <?php 
-                foreach($staff_picks as $b) {
-                    $title = $b['title']; 
-                    $author = $b['author']; 
-                    $rating = $b['rating']; 
-                    $image = '../assets/images/book-covers/' . $b['cover'];
-                    include '../components/book-card.php';
-                }
-                ?>
+                <?php foreach($staff_picks as $b): ?>
+                    <div class="book-card">
+                        <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover']); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>" class="book-cover-img">
+                        <h4 class="book-title"><?php echo htmlspecialchars($b['title']); ?></h4>
+                        <p class="book-author"><?php echo htmlspecialchars($b['author']); ?></p>
+                        <div class="book-rating">
+                            <i class="fa-solid fa-star"></i> <span><?php echo htmlspecialchars($b['rating']); ?></span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </section>
 
@@ -197,15 +201,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                 <a href="#" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
-                <?php 
-                foreach($community_favorites as $b) {
-                    $title = $b['title']; 
-                    $author = $b['author']; 
-                    $rating = $b['rating']; 
-                    $image = '../assets/images/book-covers/' . $b['cover'];
-                    include '../components/book-card.php';
-                }
-                ?>
+                <?php foreach($community_favorites as $b): ?>
+                    <div class="book-card">
+                        <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover']); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>" class="book-cover-img">
+                        <h4 class="book-title"><?php echo htmlspecialchars($b['title']); ?></h4>
+                        <p class="book-author"><?php echo htmlspecialchars($b['author']); ?></p>
+                        <div class="book-rating">
+                            <i class="fa-solid fa-star"></i> <span><?php echo htmlspecialchars($b['rating']); ?></span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </section>
 

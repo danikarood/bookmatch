@@ -10,7 +10,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <li><a href="discover.php" class="<?php echo ($current_page == 'discover.php') ? 'active' : ''; ?>">Discover</a></li>
             <li><a href="quizzes.php" class="<?php echo ($current_page == 'quizzes.php') ? 'active' : ''; ?>">Quizzes</a></li>
             <li><a href="books.php" class="<?php echo ($current_page == 'books.php') ? 'active' : ''; ?>">Books</a></li>
-            <li><a href="genres.php" class="<?php echo ($current_page == 'genres.php') ? 'active' : ''; ?>">Genres</a></li>
             <li><a href="community.php" class="<?php echo ($current_page == 'community.php') ? 'active' : ''; ?>">Community</a></li>
             <li><a href="my-library.php" class="<?php echo ($current_page == 'my-library.php') ? 'active' : ''; ?>">My Library</a></li>
         </ul>

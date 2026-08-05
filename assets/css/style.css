@@ -119,10 +119,7 @@
     display: block;
 }
 
-
-/* ==========================================
-   DISCOVER PAGE STYLING
-   ========================================== */
+/*Discover Page Styles*/
 /* Reset global constraints for normal scrolling pages */
 html, body {
     height: auto !important;
@@ -220,4 +217,501 @@ html, body {
     max-width: 600px;
     position: relative;
     z-index: 2;
+}
+
+/*Community/ recommended books page styles*/
+.community-page {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 30px 40px;
+}
+
+.community-hero {
+    background: #f4eee3;
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border: 1px solid #e5ded5;
+}
+
+.community-hero-content h1 {
+    font-size: 38px;
+    color: #2c221e;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.community-hero-content h1 em {
+    font-style: italic;
+    font-family: serif;
+}
+
+.community-hero-content p {
+    color: #666;
+    font-size: 15px;
+    margin-bottom: 25px;
+    max-width: 500px;
+}
+
+.community-hero-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: #C18844;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: #fff;
+    color: #2c221e;
+    border: 1px solid #d1c7bc;
+}
+
+.community-hero-quote {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    max-width: 320px;
+    border: 1px solid #e5ded5;
+}
+
+.community-hero-quote blockquote {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-style: italic;
+    color: #2c221e;
+}
+
+.community-hero-quote blockquote span {
+    display: block;
+    font-size: 13px;
+    color: #666;
+    margin-top: 6px;
+    font-style: normal;
+}
+
+.inspiration-label {
+    font-size: 11px;
+    color: #C18844;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Grids */
+.community-grid-top, .community-grid-bottom {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.community-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid #e5ded5;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-header h3 {
+    font-size: 18px;
+    color: #2c221e;
+    margin: 0;
+}
+
+.card-header .view-all {
+    font-size: 13px;
+    color: #C18844;
+    text-decoration: none;
+}
+
+/* Featured Readers */
+.readers-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.reader-item {
+    background: #faf8f5;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #f0ebe4;
+}
+
+.reader-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 8px;
+}
+
+.reader-item h4 {
+    font-size: 13px;
+    margin: 0;
+    color: #2c221e;
+}
+
+.reader-item .handle {
+    font-size: 11px;
+    color: #888;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.reader-item .bio {
+    font-size: 11px;
+    color: #555;
+    height: 30px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.reader-item .badge {
+    background: #fdf3e6;
+    color: #C18844;
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.reader-stats {
+    display: flex;
+    justify-content: space-around;
+    font-size: 10px;
+    border-top: 1px solid #e5ded5;
+    padding-top: 6px;
+    color: #666;
+}
+
+.reader-stats strong {
+    display: block;
+    color: #2c221e;
+}
+
+/* Reader Reviews Card */
+.review-highlight-content {
+    display: flex;
+    gap: 15px;
+}
+
+.review-book-cover {
+    width: 90px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.reviewer-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.mini-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.reviewer-meta h5 {
+    font-size: 12px;
+    margin: 0;
+}
+
+.time-ago {
+    font-size: 10px;
+    color: #888;
+}
+
+.stars {
+    font-size: 11px;
+    color: #f59e0b;
+    margin-bottom: 4px;
+}
+
+.review-info h4 {
+    font-size: 13px;
+    margin: 0 0 4px 0;
+    color: #2c221e;
+}
+
+.review-info p {
+    font-size: 11px;
+    color: #666;
+    margin: 0 0 10px 0;
+}
+
+.review-actions {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    color: #666;
+    align-items: center;
+}
+
+.review-actions .bookmark-icon {
+    margin-left: auto;
+    cursor: pointer;
+}
+
+/* Book Clubs */
+.clubs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.club-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #faf8f5;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #f0ebe4;
+}
+
+.club-details h5 {
+    font-size: 12px;
+    margin: 0 0 2px 0;
+}
+
+.club-details span {
+    font-size: 11px;
+    color: #888;
+}
+
+.btn-join {
+    background: #fff;
+    border: 1px solid #C18844;
+    color: #C18844;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-join:hover {
+    background: #C18844;
+    color: #fff;
+}
+
+/* Bottom Grid Section Setup */
+.community-grid-bottom {
+    grid-template-columns: 1.5fr 1fr 1.5fr;
+}
+
+/* Reading Challenges */
+.challenges-row {
+    display: flex;
+    gap: 10px;
+}
+
+.challenge-box {
+    flex: 1;
+    background: #faf8f5;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #f0ebe4;
+    position: relative;
+    overflow: hidden;
+}
+
+.challenge-bg {
+    height: 70px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.challenge-box h4 {
+    font-size: 12px;
+    margin: 0 0 2px 0;
+}
+
+.challenge-box p {
+    font-size: 10px;
+    color: #666;
+    margin: 0 0 8px 0;
+}
+
+.progress-bar {
+    height: 4px;
+    background: #e5ded5;
+    border-radius: 2px;
+    margin-bottom: 4px;
+    overflow: hidden;
+}
+
+.progress-bar .fill {
+    height: 100%;
+    background: #C18844;
+}
+
+.progress-count {
+    font-size: 10px;
+    color: #888;
+    display: block;
+    text-align: right;
+}
+
+/* Trending Discussions */
+.discussion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.discussion-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    border-bottom: 1px solid #f0ebe4;
+    padding-bottom: 10px;
+}
+
+.discussion-content h5 {
+    font-size: 12px;
+    margin: 0 0 2px 0;
+    color: #2c221e;
+}
+
+.discussion-content span {
+    font-size: 10px;
+    color: #888;
+}
+
+.fire-icon {
+    color: #f97316;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.more-conversations {
+    font-size: 12px;
+    color: #C18844;
+    text-decoration: none;
+    font-weight: 500;
+    display: block;
+    text-align: center;
+}
+
+/* Popular This Week */
+.popular-books-row {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.popular-book-item {
+    flex: 0 0 100px; /* Fixed card width so titles wrap nicely */
+    width: 100px;
+    text-align: left;
+}
+
+.popular-book-item img {
+    width: 100px;
+    height: 145px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    display: block;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Allow title text to wrap onto multiple lines like image #2 */
+.popular-book-item .book-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2c221e;
+    margin: 0 0 3px 0;
+    line-height: 1.25;
+    white-space: normal; /* Enables natural line breaking */
+    word-wrap: break-word;
+}
+
+.popular-book-item .book-author {
+    font-size: 11px;
+    color: #777;
+    margin: 0 0 4px 0;
+    line-height: 1.2;
+    white-space: normal;
+}
+
+.popular-book-item .book-rating {
+    font-size: 11px;
+    color: #f59e0b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.community-visual-banner {
+    width: 100%;
+    min-height: 180px; /* Gives the banner height so the image becomes visible */
+    background-size: cover; /* Ensures the image scales to cover the whole banner */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat;
+    border-radius: 12px; /* Optional: matches your card styling */
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    margin: 30px 0;
+}
+
+/* Optional overlay to make text readable over the background image */
+.community-visual-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.35); /* Darkens the background slightly */
+    z-index: 1;
+}
+
+.banner-overlay-content {
+    position: relative;
+    z-index: 2;
+    padding: 30px;
+    color: #ffffff; /* Ensures text is white and legible */
 }
