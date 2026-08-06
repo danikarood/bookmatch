@@ -145,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
         <section class="shelf-section">
             <div class="shelf-header">
                 <h3>Today's Picks (Total Library: <?php echo $total_books; ?> books)</h3>
-                <a href="#" class="view-all">View all</a>
+               <a href="book.php?category=todays_picks" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
                 <?php 
@@ -164,7 +164,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
         <section class="shelf-section">
             <div class="shelf-header">
                 <h3>Trending on BookTok <i class="fa-brands fa-tiktok" style="color: #C18844;"></i></h3>
-                <a href="#" class="view-all">View all</a>
+                <a href="book.php?category=booktok" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
                 <?php 
@@ -183,7 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
         <section class="shelf-section">
             <div class="shelf-header">
                 <h3>Community Picks</h3>
-                <a href="#" class="view-all">View all</a>
+                <a href="book.php?category=community_picks" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
                 <?php 
@@ -232,7 +232,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
             </div>
             <div class="mood-row">
                 <div class="mood-card">
-                    <img src="https://unsplash.com/photos/white-and-brown-box-on-white-textile-wEsh7oJzZeE" alt="Mood">
+                    <img src="../assets/images/Cozy and Comfort.jpg" alt="Mood">
                     <span>Cozy & Comforting</span>
                 </div>
                 <div class="mood-card">

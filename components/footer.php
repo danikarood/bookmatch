@@ -16,10 +16,9 @@
         <div class="footer-links-group">
             <h4>Discover</h4>
             <a href="quizzes.php">Quizzes</a>
-            <a href="#">Books</a>
+            <a href="books.php">Books</a>
             <a href="#">Genres</a>
-            <a href="#">Recommendations</a>
-            <a href="#">Hidden Library</a>
+            <a href="community.php">Recommendations</a>
         </div>
         <div class="footer-links-group">
             <h4>Community</h4>
@@ -30,10 +29,10 @@
         </div>
         <div class="footer-links-group">
             <h4>My Library</h4>
-            <a href="hidden-liabrary.php">Saved Books</a>
+            <a href="hidden-liabrary.php">Hidden Library</a>
             <a href="#">My Reviews</a>
             <a href="reading-list.php">Reading List</a>
-            <a href="#">Profile</a>
+            <a href="user profile.php">Profile</a>
         </div>
         <div class="footer-links-group">
             <h4>Company</h4>

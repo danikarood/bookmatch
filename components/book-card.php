@@ -12,3 +12,4 @@ $image = $image ?? "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?au
     <p><?php echo htmlspecialchars($author); ?></p>
     <div class="mini-rating"><i class="fa-solid fa-star"></i> <?php echo htmlspecialchars($rating); ?></div>
 </div>
+
