@@ -22,7 +22,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <i class="fa-solid fa-chevron-down"></i>
                 </a>
                 <div class="dropdown-content">
-                    <a href="user-profile.php">My Profile</a>
+                    <a href="user profile.php">My Profile</a>
                     <a href="settings.php">Settings</a>
                     <a href="logout.php">Logout</a>
                 </div>

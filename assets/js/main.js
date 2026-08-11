@@ -350,3 +350,31 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCollections();
     renderRecentlyAdded();
 });
+
+//User profile page js
+document.addEventListener('DOMContentLoaded', () => {
+    // Handle Club Join toggling
+    document.querySelectorAll('.btn-join').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (button.textContent === 'Join') {
+                button.textContent = 'Joined';
+                button.style.background = '#C18844';
+                button.style.color = '#fff';
+            } else {
+                button.textContent = 'Join';
+                button.style.background = '#fff';
+                button.style.color = '#C18844';
+            }
+        });
+    });
+
+    // Handle friend messages click popup
+    document.querySelectorAll('.btn-message').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const name = btn.closest('.friend-item').querySelector('h5').textContent;
+            alert(`Opening chat with ${name}...`);
+        });
+    });
+});

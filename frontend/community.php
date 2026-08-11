@@ -196,12 +196,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
         </div>
 
         <!-- Atmospheric Banner 1 -->
-         <section class="community-visual-banner" style="background-image: url('../assets/images/Community%202.jpg');">
-             <div class="banner-overlay-content">
-                 <h3>The Reader’s Nook</h3>
-                 <p>Curl up with a warm cup of coffee, a cozy blanket, and your next unforgettable story.</p>
-              </div>
-         </section>
+        <!-- Atmospheric Banner 1 -->
+        <div class="community-visual-banner" style="background-image: url('../assets/images/Community%201.png');">
+            <div class="banner-overlay-content">
+                <h3>The Reader’s Nook</h3>
+                <p>Curl up with a warm cup of coffee, a cozy blanket, and your next unforgettable story.</p>
+            </div>
+        </div>
 
         <!-- Bottom Grid Section -->
         <div class="community-grid-bottom">
@@ -292,12 +293,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
         </div>
 
         <!-- Atmospheric Banner 2 -->
-        <section class="community-visual-banner banner-library" style="background-image: url('../assets/images/Community%201.jpg');">
+        <!-- Atmospheric Banner 2 -->
+        <div class="community-visual-banner" style="background-image: url('../assets/images/Community%202.png');">
             <div class="banner-overlay-content">
                 <h3>The Library Archive</h3>
                 <p>Explore timeless volumes, secret maps, and treasured stories preserved across the ages.</p>
             </div>
-        </section>
+        </div>
 
         <!-- Newsletter Section -->
         <section class="lower-section">
