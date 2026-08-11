@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
 
     } else {
-        $_SESSION['error'] = "Invalid email or password. Use test@example.com / password123";
+        $_SESSION['error'] = "Invalid email or password.";
         header("Location: ../../frontend/login.php");
         exit();
     }
