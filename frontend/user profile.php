@@ -93,8 +93,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                     </div>
 
                     <div class="profile-actions">
-                        <a href="edit-profile.php" class="btn-primary-block">Edit Profile</a>
-                        <a href="edit-profile.php" class="btn-settings"><i class="fa-solid fa-gear"></i></a>
+                        <a href="#" class="btn-primary-block">Edit Profile</a>
+                        <a href="#" class="btn-settings"><i class="fa-solid fa-gear"></i></a>
                     </div>
                 </div>
             </aside>
@@ -460,6 +460,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
         </section>
 
     </main>
+
+    <!-- Edit Profile Modal -->
+<div id="editProfileModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Profile</h3>
+            <button type="button" class="modal-close-btn" id="closeModalBtn">&times;</button>
+        </div>
+        <form id="editProfileForm" action="update-profile.php" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="editName">Name</label>
+                <input type="text" id="editName" name="name" value="Danika Rood">
+            </div>
+            <div class="form-group">
+                <label for="editBio">Bio / Favorite Quote</label>
+                <textarea id="editBio" name="bio">"There is no friend as loyal as a book."</textarea>
+            </div>
+            <div class="form-group">
+                <label for="editAvatar">Profile Picture</label>
+                <input type="file" id="editAvatar" name="avatar">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="cancelModalBtn">Cancel</button>
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
 
     <!-- Include Modular Footer -->
     <?php include '../components/footer.php'; ?>

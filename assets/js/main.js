@@ -378,3 +378,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('editProfileModal');
+    const editBtn = document.querySelector('a[href*="profile.php"]'); // Adjust selector if needed, or target your Edit button specifically
+    const closeBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelModalBtn');
+
+    // If you have an "Edit Profile" button class, use that instead. Let's make sure it targets your profile edit button safely:
+    const profileEditTrigger = document.querySelector('.profile-actions .btn-primary-block'); 
+
+    if (profileEditTrigger) {
+        profileEditTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.style.display = 'flex';
+        });
+    }
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking outside the content box
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+});
+
+//admin dashboard page js
+document.addEventListener("DOMContentLoaded", () => {
+    // Simple interactive feedback logic for dashboard buttons
+    const actionButtons = document.querySelectorAll(".action-btn");
+    
+    actionButtons.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const actionName = e.currentTarget.innerText.trim();
+            alert(`Triggered action: ${actionName}`);
+        });
+    });
+
+    // Sidebar active link switching
+    const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
+    navItems.forEach(item => {
+        item.addEventListener("click", function() {
+            navItems.forEach(nav => nav.classList.remove("active"));
+            this.classList.add("active");
+        });
+    });
+});
