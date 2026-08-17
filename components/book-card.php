@@ -4,8 +4,9 @@ $title = $title ?? "The Night Circus";
 $author = $author ?? "Erin Morgenstern";
 $rating = $rating ?? "4.7";
 $image = $image ?? "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=200&q=80";
+$book_query = rawurlencode($title);
 ?>
-<div class="book-card" onclick="window.location.href='book-details.php'">
+<div class="book-card" onclick="window.location.href='book-details.php?book=<?php echo $book_query; ?>'">
     <img src="<?php echo htmlspecialchars($image); ?>" alt="<?php echo htmlspecialchars($title); ?>">
     <i class="fa-regular fa-bookmark bookmark-overlay"></i>
     <h4><?php echo htmlspecialchars($title); ?></h4>

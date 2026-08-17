@@ -84,7 +84,7 @@ session_start();
                             <div class="custom-input-group">
                                 <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
                                 <input type="password" name="password" id="password" class="custom-input" placeholder="Enter your password" required>
-                                <span class="password-toggle" onclick="togglePasswordVisibility('password', this)">
+                                <span class="password-toggle" onclick="togglePassword('password', this)">
                                     <i class="fa-regular fa-eye-slash"></i>
                                 </span>
                             </div>

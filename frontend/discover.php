@@ -75,7 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
 
     <!-- Main Container -->
     <main class="main-content">
-
         <!-- Hero / Discover Section matching UI design -->
         <section class="hero-section">
             <div class="hero-bg-img" style="background-image: url('../assets/images/Discover top left .png');"></div>
@@ -122,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
             </div>
             <div class="book-row-netflix">
                 <?php foreach($trending_books as $b): ?>
-                    <div class="book-card">
+                    <div class="book-card" onclick="window.location.href='book-details.php?book=<?php echo rawurlencode($b['title']); ?>'">
                         <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover']); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>" class="book-cover-img">
                         <h4 class="book-title"><?php echo htmlspecialchars($b['title']); ?></h4>
                         <p class="book-author"><?php echo htmlspecialchars($b['author']); ?></p>
@@ -142,7 +141,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
             </div>
             <div class="book-row-netflix">
                 <?php foreach($hidden_gems as $b): ?>
-                    <div class="book-card">
+                    <div class="book-card" onclick="window.location.href='book-details.php?book=<?php echo rawurlencode($b['title']); ?>'">
                         <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover']); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>" class="book-cover-img">
                         <h4 class="book-title"><?php echo htmlspecialchars($b['title']); ?></h4>
                         <p class="book-author"><?php echo htmlspecialchars($b['author']); ?></p>
@@ -162,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
             </div>
             <div class="book-row-netflix">
                 <?php foreach($new_releases as $b): ?>
-                    <div class="book-card">
+                    <div class="book-card" onclick="window.location.href='book-details.php?book=<?php echo rawurlencode($b['title']); ?>'">
                         <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover']); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>" class="book-cover-img">
                         <h4 class="book-title"><?php echo htmlspecialchars($b['title']); ?></h4>
                         <p class="book-author"><?php echo htmlspecialchars($b['author']); ?></p>
@@ -182,7 +181,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
             </div>
             <div class="book-row-netflix">
                 <?php foreach($staff_picks as $b): ?>
-                    <div class="book-card">
+                    <div class="book-card" onclick="window.location.href='book-details.php?book=<?php echo rawurlencode($b['title']); ?>'">
                         <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover']); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>" class="book-cover-img">
                         <h4 class="book-title"><?php echo htmlspecialchars($b['title']); ?></h4>
                         <p class="book-author"><?php echo htmlspecialchars($b['author']); ?></p>
@@ -202,7 +201,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
             </div>
             <div class="book-row-netflix">
                 <?php foreach($community_favorites as $b): ?>
-                    <div class="book-card">
+                    <div class="book-card" onclick="window.location.href='book-details.php?book=<?php echo rawurlencode($b['title']); ?>'">
                         <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover']); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>" class="book-cover-img">
                         <h4 class="book-title"><?php echo htmlspecialchars($b['title']); ?></h4>
                         <p class="book-author"><?php echo htmlspecialchars($b['author']); ?></p>

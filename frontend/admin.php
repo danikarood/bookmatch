@@ -4,19 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookMatch Admin Dashboard</title>
-    <!-- Bootstrap Icons CSS CDN -->
+        <link rel="icon" href="../assets/images/Title%20logo.svg" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <style>
+        html, body {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            height: auto !important;
+        }
+
+        .dashboard-container {
+            display: flex;
+            width: 100vw;
+            min-height: 100vh;
+            align-items: stretch;
+            overflow: hidden;
+        }
+
+        .dashboard-container > .sidebar {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 260px;
+            min-width: 260px;
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+            flex-shrink: 0;
+            z-index: 20;
+        }
+
+        .dashboard-container > .main-content {
+            flex: 1 1 auto;
+            width: auto;
+            max-width: none;
+            margin-left: 0;
+            padding: 0;
+            min-width: 0;
+            min-height: 100vh;
+            height: auto;
+            overflow: visible;
+        }
+
+        .dashboard-container > .main-content .top-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-container {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .dashboard-container > .sidebar {
+                width: 100%;
+                min-width: 100%;
+                height: auto;
+                max-height: none;
+                position: relative;
+            }
+
+            .dashboard-container > .main-content {
+                min-height: auto;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="dashboard-container">
-    <!-- Include Sidebar Component -->
-    <?php include 'sidebar.php'; ?>
+    <?php include '../components/sidebar.php'; ?>
 
     <main class="main-content">
-        <!-- Include Header Component -->
-        <?php include 'header.php'; ?>
+        <header class="top-header">
+            <div class="header-date">Monday, 17 August 2026</div>
+            <div class="header-user-area">
+                <div class="notification-bell">
+                    <i class="bi bi-bell"></i>
+                    <span class="badge-count">3</span>
+                </div>
+                <div class="user-profile">
+                    <img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" alt="Admin profile picture">
+                    <div class="user-info">
+                        <span class="user-name">Admin User</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                </div>
+            </div>
+        </header>
 
         <div class="content-body">
             <div class="dashboard-header-title">
@@ -298,6 +377,6 @@
     </main>
 </div>
 
-<script src="script.js"></script>
+<script src="../assets/js/main.js"></script>
 </body>
 </html>

@@ -101,7 +101,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
     <?php include '../components/navbar.php'; ?>
 
     <!-- Main Container -->
-    <main class="main-content">
 
         <!-- Hero Section with Asset 1 Background -->
         <section class="hero-section">

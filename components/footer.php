@@ -1,5 +1,5 @@
 <footer class="site-footer">
-    <div class="footer-scene-bg" style="background-image: url('../assets/images/Bottom right scene.jpg');"></div>
+    <div class="footer-scene-bg" aria-hidden="true"></div>
     <div class="footer-content">
         <div class="footer-brand">
             <div class="nav-brand">
