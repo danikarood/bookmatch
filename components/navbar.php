@@ -12,7 +12,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <li><a href="books.php" class="<?php echo ($current_page == 'books.php') ? 'active' : ''; ?>">Books</a></li>
             <li><a href="community.php" class="<?php echo ($current_page == 'community.php') ? 'active' : ''; ?>">Community</a></li>
             <li><a href="reading-list.php" class="<?php echo ($current_page == 'my-library.php') ? 'active' : ''; ?>">My Library</a></li>
-            <li><a href="user profile.php" class="profile-btn <?php echo ($current_page == 'user-profile.php') ? 'active' : ''; ?>">
+            <li><a href="user-profile.php" class="profile-btn <?php echo ($current_page == 'user-profile.php') ? 'active' : ''; ?>">
                     <i class="fa-solid fa-circle-user"></i>
                     <span>Profile</span>
                 </a></li>

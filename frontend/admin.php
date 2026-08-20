@@ -76,6 +76,27 @@
 </head>
 <body>
 
+<?php
+// Start session to handle messages
+session_start();
+$success_message = isset($_SESSION['success']) ? $_SESSION['success'] : '';
+$error_message = isset($_SESSION['error']) ? $_SESSION['error'] : '';
+unset($_SESSION['success']);
+unset($_SESSION['error']);
+?>
+
+<!-- Success/Error Messages -->
+<?php if (!empty($success_message)): ?>
+    <div class="alert alert-success" style="margin: 20px; padding: 15px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
+        <?php echo htmlspecialchars($success_message); ?>
+    </div>
+<?php endif; ?>
+<?php if (!empty($error_message)): ?>
+    <div class="alert alert-error" style="margin: 20px; padding: 15px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24;">
+        <?php echo htmlspecialchars($error_message); ?>
+    </div>
+<?php endif; ?>
+
 <div class="dashboard-container">
     <?php include '../components/sidebar.php'; ?>
 
@@ -378,5 +399,82 @@
 </div>
 
 <script src="../assets/js/main.js"></script>
+
+<!-- Admin Edit Profile Modal -->
+<div id="editAdminProfileModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Admin Profile</h3>
+            <button type="button" class="modal-close-btn" id="closeAdminModalBtn">&times;</button>
+        </div>
+        <form id="editAdminProfileForm" action="../../backend/admin/update-profile.php" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="editAdminName">Name</label>
+                <input type="text" id="editAdminName" name="name" value="Admin User" required>
+            </div>
+            <div class="form-group">
+                <label for="editAdminRole">Role</label>
+                <input type="text" id="editAdminRole" name="role" value="Administrator" required>
+            </div>
+            <div class="form-group">
+                <label for="editAdminAvatar">Profile Picture</label>
+                <input type="file" id="editAdminAvatar" name="avatar" accept="image/*">
+                <small>Supported formats: JPG, PNG, GIF, WEBP (Max 5MB)</small>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="cancelAdminModalBtn">Cancel</button>
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Admin Profile Edit Modal Handler
+    const adminAvatarImg = document.querySelector('.user-profile .avatar');
+    const editAdminModalBtn = adminAvatarImg ? adminAvatarImg.parentElement : null;
+    const closeAdminModalBtn = document.getElementById('closeAdminModalBtn');
+    const cancelAdminModalBtn = document.getElementById('cancelAdminModalBtn');
+    const editAdminProfileModal = document.getElementById('editAdminProfileModal');
+    const editAdminAvatarInput = document.getElementById('editAdminAvatar');
+
+    // Open modal when avatar is clicked
+    if (adminAvatarImg) {
+        adminAvatarImg.style.cursor = 'pointer';
+        adminAvatarImg.addEventListener('click', function() {
+            editAdminProfileModal.style.display = 'flex';
+        });
+    }
+
+    // Close modal when close button is clicked
+    if (closeAdminModalBtn) {
+        closeAdminModalBtn.addEventListener('click', function() {
+            editAdminProfileModal.style.display = 'none';
+        });
+    }
+
+    // Close modal when cancel button is clicked
+    if (cancelAdminModalBtn) {
+        cancelAdminModalBtn.addEventListener('click', function() {
+            editAdminProfileModal.style.display = 'none';
+        });
+    }
+
+    // Close modal when clicking outside of it
+    editAdminProfileModal.addEventListener('click', function(event) {
+        if (event.target === editAdminProfileModal) {
+            editAdminProfileModal.style.display = 'none';
+        }
+    });
+
+    // Show file name when a file is selected
+    editAdminAvatarInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            const fileName = this.files[0].name;
+            const fileSize = (this.files[0].size / 1024 / 1024).toFixed(2);
+            console.log('File selected: ' + fileName + ' (' + fileSize + 'MB)');
+        }
+    });
+</script>
 </body>
 </html>

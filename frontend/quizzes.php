@@ -1,3 +1,28 @@
+<?php
+// Verbind met jou databasis en haal dinamiese vrae-tellings op
+$host = 'localhost';
+$dbname = 'bookmatch';
+$username = 'root';
+$password = '';
+
+$quiz_counts = [];
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Tel hoeveel vrae per quiz in die databasis is
+    $stmt = $pdo->prepare("SELECT quiz_type, COUNT(*) as total FROM questions GROUP BY quiz_type");
+    $stmt->execute();
+    $quiz_counts = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+} catch (PDOException $e) {
+    // Val terug op standaard waardes as databasis nie beskikbaar is nie
+}
+
+// Hulpfunksie vir tellings
+function getCount($type, $default, $counts) {
+    return isset($counts[$type]) ? $counts[$type] . ' questions' : $default;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +65,6 @@
             padding: 40px 30px 80px;
         }
 
-        /* --- SHARED QUIZ SECTION STYLES --- */
         .quiz-section-wrapper {
             background: var(--panel);
             border: 1px solid var(--border);
@@ -92,7 +116,6 @@
             max-width: 600px;
         }
 
-        /* Meta Info Boxes */
         .quiz-info-cards {
             display: flex;
             gap: 16px;
@@ -128,7 +151,6 @@
             color: var(--text-main);
         }
 
-        /* Action Buttons */
         .quiz-buttons {
             display: flex;
             flex-direction: column;
@@ -149,6 +171,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 8px 20px rgba(200, 140, 66, 0.25);
+            text-decoration: none;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
@@ -157,27 +180,6 @@
             box-shadow: 0 12px 25px rgba(200, 140, 66, 0.35);
         }
 
-        .btn-secondary-quiz {
-            background: transparent;
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 16px 28px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: background 0.2s ease;
-        }
-
-        .btn-secondary-quiz:hover {
-            background: rgba(200, 140, 66, 0.05);
-        }
-
-        /* Bottom Feature Highlights */
         .quiz-features-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -219,7 +221,6 @@
             line-height: 1.5;
         }
 
-        /* --- LAYOUT 1: NEXT READ (Split View) --- */
         .layout-next-read {
             display: grid;
             grid-template-columns: 1fr 1.1fr;
@@ -242,7 +243,6 @@
             object-fit: cover;
         }
 
-        /* --- LAYOUT 2: READING PERSONALITY --- */
         .layout-personality {
             display: grid;
             grid-template-columns: 1.1fr 1fr;
@@ -254,7 +254,6 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-            position: relative;
         }
 
         .personality-card {
@@ -286,7 +285,6 @@
             line-height: 1.4;
         }
 
-        /* --- LAYOUT 3: GENRE QUIZ --- */
         .layout-genre {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
@@ -311,16 +309,11 @@
             border-radius: 12px;
         }
 
-        /* --- LAYOUT 4: MOOD MATCH --- */
         .layout-mood {
             display: grid;
             grid-template-columns: 1fr 1.1fr;
             gap: 50px;
             align-items: center;
-        }
-
-        .mood-top-content {
-            max-width: 650px;
         }
 
         .mood-visual {
@@ -337,50 +330,12 @@
             object-fit: cover;
         }
 
-        .mood-arches-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 16px;
-            height: 30px;
-            margin-bottom: 40px;
-        }
-
-        .mood-arch-item {
-            border-radius: 150px 150px 20px 20px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        .mood-arch-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .mood-arch-label {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            color: white;
-            font-weight: 600;
-            font-size: 15px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-            font-family: Georgia, serif;
-        }
-
         @media (max-width: 1024px) {
-            .layout-next-read, .layout-personality, .layout-genre {
+            .layout-next-read, .layout-personality, .layout-genre, .layout-mood {
                 grid-template-columns: 1fr;
             }
             .quiz-features-row {
                 grid-template-columns: repeat(2, 1fr);
-            }
-            .mood-arches-grid {
-                grid-template-columns: repeat(3, 1fr);
-                height: auto;
             }
         }
     </style>
@@ -394,7 +349,7 @@
         <section class="quiz-section-wrapper" id="next-read">
             <div class="layout-next-read">
                 <div class="visual-bookstack">
-                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=80" alt="Book Stack and Coffee Setup">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=80" alt="Book Stack">
                 </div>
                 <div>
                     <span class="quiz-tag"><i class="fa-solid fa-sparkles"></i> Personalized Recommendation Quiz</span>
@@ -414,19 +369,16 @@
                             <i class="fa-solid fa-list-ul"></i>
                             <div>
                                 <div class="label">Questions</div>
-                                <div class="value">10 questions</div>
+                                <div class="value"><?php echo getCount('next-read', '10 questions', $quiz_counts); ?></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="quiz-buttons">
-                        <button class="btn-primary-quiz" onclick="alert('Starting Next Read Quiz...')">
+                        <a href="../backend/quiz/quiz-engine.php?type=mood" class="btn-primary-quiz">
                             <span>Start Quiz</span>
                             <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                        <button class="btn-secondary-quiz" onclick="window.location.href='quizzes.php'">
-                            <i class="fa-solid fa-arrow-left"></i> Back to Quizzes
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -434,31 +386,19 @@
             <div class="quiz-features-row">
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-book-open"></i></div>
-                    <div class="feature-text">
-                        <h4>Personal</h4>
-                        <p>Tailored to your mood and preferences.</p>
-                    </div>
+                    <div class="feature-text"><h4>Personal</h4><p>Tailored to your mood and preferences.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-compass"></i></div>
-                    <div class="feature-text">
-                        <h4>Discover</h4>
-                        <p>Find books you’ll love but never knew existed.</p>
-                    </div>
+                    <div class="feature-text"><h4>Discover</h4><p>Find books you’ll love but never knew existed.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-heart"></i></div>
-                    <div class="feature-text">
-                        <h4>Smart Matches</h4>
-                        <p>Backed by reader insights and community love.</p>
-                    </div>
+                    <div class="feature-text"><h4>Smart Matches</h4><p>Backed by reader insights and community love.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
-                    <div class="feature-text">
-                        <h4>Quick & Fun</h4>
-                        <p>A short quiz for your next great read.</p>
-                    </div>
+                    <div class="feature-text"><h4>Quick & Fun</h4><p>A short quiz for your next great read.</p></div>
                 </div>
             </div>
         </section>
@@ -484,42 +424,39 @@
                             <i class="fa-solid fa-list-ul"></i>
                             <div>
                                 <div class="label">Questions</div>
-                                <div class="value">12 questions</div>
+                                <div class="value"><?php echo getCount('personality', '12 questions', $quiz_counts); ?></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="quiz-buttons">
-                        <button class="btn-primary-quiz" onclick="alert('Starting Personality Quiz...')">
+                        <a href="../backend/quiz/quiz-engine.php?type=mood" class="btn-primary-quiz">
                             <span>Start Quiz</span>
                             <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                        <button class="btn-secondary-quiz" onclick="window.location.href='quizzes.php'">
-                            <i class="fa-solid fa-arrow-left"></i> Back to Quizzes
-                        </button>
+                        </a>
                     </div>
                 </div>
 
                 <div class="personality-visual-grid">
                     <div class="personality-card">
-                        <img src="https://images.unsplash.com/photo-1524578271613-d550eacf6090?auto=format&fit=crop&w=400&q=80" alt="The Dreamer">
+                        <img src="https://images.unsplash.com/photo-1524578271613-d550eacf6090?auto=format&fit=crop&w=400&q=80" alt="Dreamer">
                         <h4>The Dreamer</h4>
-                        <p>Stories that transport you to another world.</p>
+                        <p>Stories that transport you.</p>
                     </div>
                     <div class="personality-card">
-                        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80" alt="The Thinker">
+                        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80" alt="Thinker">
                         <h4>The Thinker</h4>
-                        <p>Stories that challenge ideas and spark thoughts.</p>
+                        <p>Stories that spark thoughts.</p>
                     </div>
                     <div class="personality-card">
-                        <img src="https://images.unsplash.com/photo-1526243741027-444d633d7365?auto=format&fit=crop&w=400&q=80" alt="The Explorer">
+                        <img src="https://images.unsplash.com/photo-1526243741027-444d633d7365?auto=format&fit=crop&w=400&q=80" alt="Explorer">
                         <h4>The Explorer</h4>
-                        <p>Adventure and discovery stories.</p>
+                        <p>Adventure and discovery.</p>
                     </div>
                     <div class="personality-card">
-                        <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=400&q=80" alt="The Empath">
+                        <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=400&q=80" alt="Empath">
                         <h4>The Empath</h4>
-                        <p>Deep connections with characters.</p>
+                        <p>Deep connections.</p>
                     </div>
                 </div>
             </div>
@@ -527,31 +464,19 @@
             <div class="quiz-features-row">
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-heart"></i></div>
-                    <div class="feature-text">
-                        <h4>Understand Yourself</h4>
-                        <p>Learn what makes your reading heart beat.</p>
-                    </div>
+                    <div class="feature-text"><h4>Understand Yourself</h4><p>Learn what makes your reading heart beat.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-book"></i></div>
-                    <div class="feature-text">
-                        <h4>Personalised Picks</h4>
-                        <p>Get book recommendations tailored to you.</p>
-                    </div>
+                    <div class="feature-text"><h4>Personalised Picks</h4><p>Get book recommendations tailored to you.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-users"></i></div>
-                    <div class="feature-text">
-                        <h4>Join the Community</h4>
-                        <p>Connect with readers who share your style.</p>
-                    </div>
+                    <div class="feature-text"><h4>Join Community</h4><p>Connect with readers who share your style.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-sparkles"></i></div>
-                    <div class="feature-text">
-                        <h4>Celebrate Reading</h4>
-                        <p>Because every reader has a unique story.</p>
-                    </div>
+                    <div class="feature-text"><h4>Celebrate Reading</h4><p>Because every reader has a unique story.</p></div>
                 </div>
             </div>
         </section>
@@ -577,55 +502,40 @@
                             <i class="fa-solid fa-list-ul"></i>
                             <div>
                                 <div class="label">Questions</div>
-                                <div class="value">10 questions</div>
+                                <div class="value"><?php echo getCount('genre', '10 questions', $quiz_counts); ?></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="quiz-buttons">
-                        <button class="btn-primary-quiz" onclick="alert('Starting Genre Quiz...')">
+                        <a href="../backend/quiz/quiz-engine.php?type=genre" class="btn-primary-quiz">
                             <span>Start Quiz</span>
                             <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                        <button class="btn-secondary-quiz" onclick="window.location.href='quizzes.php'">
-                            <i class="fa-solid fa-arrow-left"></i> Back to Quizzes
-                        </button>
+                        </a>
                     </div>
                 </div>
 
                 <div class="genre-bookshelf-visual">
-                    <img src="https://images.unsplash.com/photo-1524578271613-d550eacf6090?auto=format&fit=crop&w=900&q=80" alt="Bookshelf Showcase">
+                    <img src="https://images.unsplash.com/photo-1524578271613-d550eacf6090?auto=format&fit=crop&w=900&q=80" alt="Bookshelf">
                 </div>
             </div>
 
             <div class="quiz-features-row">
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-sparkles"></i></div>
-                    <div class="feature-text">
-                        <h4>Discover Your Match</h4>
-                        <p>Find the genre that resonates with who you are.</p>
-                    </div>
+                    <div class="feature-text"><h4>Discover Match</h4><p>Find the genre that resonates with who you are.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-book-bookmark"></i></div>
-                    <div class="feature-text">
-                        <h4>Personalised Picks</h4>
-                        <p>Get book recommendations tailored to your genre.</p>
-                    </div>
+                    <div class="feature-text"><h4>Personalised Picks</h4><p>Get book recommendations tailored to genre.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-users"></i></div>
-                    <div class="feature-text">
-                        <h4>Join the Community</h4>
-                        <p>Connect with readers who share your taste.</p>
-                    </div>
+                    <div class="feature-text"><h4>Join Community</h4><p>Connect with readers who share your taste.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-star"></i></div>
-                    <div class="feature-text">
-                        <h4>Celebrate Stories</h4>
-                        <p>Because every genre has a world for you.</p>
-                    </div>
+                    <div class="feature-text"><h4>Celebrate Stories</h4><p>Because every genre has a world for you.</p></div>
                 </div>
             </div>
         </section>
@@ -637,7 +547,7 @@
                     <span class="quiz-tag">Mood Match Quiz</span>
                     <h1 class="quiz-title">Find a Book for Your <span>Mood</span></h1>
                     <div class="quiz-divider" style="justify-content: flex-start;"><i class="fa-solid fa-diamond"></i></div>
-                    <p class="quiz-description">Whether you're feeling adventurous, relaxed, nostalgic or inspired, we'll recommend books that perfectly match your current mood.</p>
+                    <p class="quiz-description">Whether you're feeling adventurous, relaxed, nostalgic or inspired, we'll recommend books that match your mood.</p>
                     
                     <div class="quiz-info-cards" style="max-width: 500px;">
                         <div class="info-card">
@@ -651,16 +561,16 @@
                             <i class="fa-solid fa-list-ul"></i>
                             <div>
                                 <div class="label">Questions</div>
-                                <div class="value">8 questions</div>
+                                <div class="value"><?php echo getCount('mood', '8 questions', $quiz_counts); ?></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="quiz-buttons">
-                        <button class="btn-primary-quiz" onclick="alert('Starting Mood Quiz...')">
+                        <a href="../backend/quiz/quiz-engine.php?type=mood" class="btn-primary-quiz">
                             <span>Start Quiz</span>
                             <i class="fa-solid fa-arrow-right"></i>
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -672,31 +582,19 @@
             <div class="quiz-features-row">
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-heart"></i></div>
-                    <div class="feature-text">
-                        <h4>Mood-Based Picks</h4>
-                        <p>Books that fit exactly how you're feeling.</p>
-                    </div>
+                    <div class="feature-text"><h4>Mood-Based Picks</h4><p>Books that fit exactly how you're feeling.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-face-smile"></i></div>
-                    <div class="feature-text">
-                        <h4>Feel Understood</h4>
-                        <p>Because the right book can change your day.</p>
-                    </div>
+                    <div class="feature-text"><h4>Feel Understood</h4><p>Because the right book changes your day.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-sparkles"></i></div>
-                    <div class="feature-text">
-                        <h4>Discover More</h4>
-                        <p>Explore new stories that match your vibe.</p>
-                    </div>
+                    <div class="feature-text"><h4>Discover More</h4><p>Explore new stories matching your vibe.</p></div>
                 </div>
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fa-solid fa-book-open"></i></div>
-                    <div class="feature-text">
-                        <h4>Share Your Mood</h4>
-                        <p>See what others are reading and feeling right now.</p>
-                    </div>
+                    <div class="feature-text"><h4>Share Mood</h4><p>See what others are reading and feeling now.</p></div>
                 </div>
             </div>
         </section>

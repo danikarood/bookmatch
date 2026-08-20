@@ -1,7 +1,8 @@
 <?php
-// backend/signup-process.php
+// backend/signup_process.php
 
 session_start();
+require_once __DIR__ . '/../backend/config/database.php'; // Adjust path if your config file is located elsewhere
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
@@ -15,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
     // Handle genres checkbox array
     $genres = isset($_POST['genres']) && is_array($_POST['genres']) ? $_POST['genres'] : [];
-    $genresJson = json_encode($genres); // Recommended: Store as JSON array string in DB
+    $genresJson = json_encode($genres);
 
     // 2. Form Validations
     if (empty($firstName) || empty($lastName) || empty($email) || empty($password)) {
@@ -26,23 +27,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die("Passwords do not match. Please go back and try again.");
     }
 
+    // Check if email already exists
+    $stmtCheck = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+    $stmtCheck->execute([$email]);
+    if ($stmtCheck->fetch()) {
+        die("An account with this email already exists. Please sign in instead.");
+    }
+
     // Hash the password securely
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    /*
-    --------------------------------------------------------------------------
-    3. MySQL Database Integration (Uncomment when database config is ready)
-    --------------------------------------------------------------------------
-    
-    $dbHost = 'localhost';
-    $dbName = 'bookmatch';
-    $dbUser = 'root';
-    $dbPass = ''; // Default XAMPP password is empty
-
     try {
-        $pdo = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8mb4", $dbUser, $dbPass);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+        // 3. Insert User into Database
         $sql = "INSERT INTO users (first_name, last_name, email, password, genres, reading_goal, created_at) 
                 VALUES (:first_name, :last_name, :email, :password, :genres, :reading_goal, NOW())";
         
@@ -56,22 +52,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ':reading_goal' => $readingGoal
         ]);
 
+        // Get the newly created user's ID
+        $userId = $pdo->lastInsertId();
+
+        // Automatically log the user in by setting session variables
+        $_SESSION['user_id'] = $userId;
+        $_SESSION['first_name'] = $firstName;
+
         // Redirect to dashboard on success
         header("Location: ../frontend/dashboard.php");
         exit();
 
     } catch (PDOException $e) {
-        die("Database connection failed: " . $e->getMessage());
+        die("Database error: " . $e->getMessage());
     }
-    */
-
-    // temporary response output until database is connected
-    echo "<h2>Account Registration Captured!</h2>";
-    echo "<p><strong>Name:</strong> " . $firstName . " " . $lastName . "</p>";
-    echo "<p><strong>Email:</strong> " . $email . "</p>";
-    echo "<p><strong>Selected Genres:</strong> " . implode(", ", $genres) . "</p>";
-    echo "<p><strong>Reading Goal:</strong> " . $readingGoal . "</p>";
-    echo "<br><a href='../frontend/signup.php'>Back to Signup</a>";
 
 } else {
     // Redirect direct page visits back to the signup page

@@ -1,29 +1,23 @@
 <?php
-$book_detail = null;
-$book_map = [
-    'the midnight library' => ['title' => 'The Midnight Library', 'author' => 'Matt Haig', 'rating' => 4.8, 'cover' => '../assets/images/book-covers/The midnight library.jpg', 'genre' => 'Fiction', 'description' => 'A moving, mind-bending story about second chances, regret, and the lives we could have lived if we had made different choices.', 'tags' => ['Fiction', 'Contemporary', 'Philosophical'], 'badge' => 'Featured Pick', 'read_time' => '8h 15m', 'price' => '$18.99'],
-    'the seven husbands of evelyn hugo' => ['title' => 'The Seven Husbands of Evelyn Hugo', 'author' => 'Taylor Jenkins Reid', 'rating' => 4.7, 'cover' => '../assets/images/book-covers/The seven husbands of evelyn hugo.jpg', 'genre' => 'Historical Fiction', 'description' => 'Aging Hollywood icon Evelyn Hugo finally tells the truth about her glamorous and scandalous life while revealing the one love story she never expected to tell.', 'tags' => ['Fiction', 'Contemporary', 'Romance', 'Historical'], 'badge' => 'Featured Pick', 'read_time' => '7h 30m', 'price' => '$18.99'],
-    'fourth wing' => ['title' => 'Fourth Wing', 'author' => 'Rebecca Yarros', 'rating' => 4.8, 'cover' => '../assets/images/book-covers/Fourth Wing.jpeg', 'genre' => 'Romantasy', 'description' => 'An exhilarating fantasy romance where a gifted rider is thrown into a brutal war college, sharpened by danger, loyalty, and the promise of a destiny that could change everything.', 'tags' => ['Fantasy', 'Romance', 'Adventure', 'YA'], 'badge' => 'Bestseller', 'read_time' => '9h 10m', 'price' => '$21.99'],
-    'the atlas six' => ['title' => 'The Atlas Six', 'author' => 'Olivie Blake', 'rating' => 4.5, 'cover' => '../assets/images/book-covers/The atlas six.jpg', 'genre' => 'Fantasy', 'description' => 'Six incredibly talented magicians are handpicked to join an elite secret society, where power, ambition, and betrayal can reshape the world.', 'tags' => ['Fantasy', 'Magical', 'Mystery', 'Academic'], 'badge' => 'Top Pick', 'read_time' => '8h 05m', 'price' => '$18.49'],
-    'the night circus' => ['title' => 'The Night Circus', 'author' => 'Erin Morgenstern', 'rating' => 4.7, 'cover' => '../assets/images/book-covers/The night circus.jpg', 'genre' => 'Fantasy', 'description' => 'A beautifully atmospheric tale of a magical circus, star-crossed lovers, and a duel played out in shadows, wonder, and illusion.', 'tags' => ['Fantasy', 'Romance', 'Magical'], 'badge' => 'Staff Pick', 'read_time' => '7h 00m', 'price' => '$17.99'],
-    'the song of achilles' => ['title' => 'The Song of Achilles', 'author' => 'Madeline Miller', 'rating' => 4.7, 'cover' => '../assets/images/book-covers/The song of achilles.jpg', 'genre' => 'Historical Fiction', 'description' => 'A lyrical retelling of the Iliad centered on Achilles and Patroclus, filled with tenderness, longing, and heartbreak.', 'tags' => ['Mythology', 'Historical', 'Romance'], 'badge' => 'Readers Love It', 'read_time' => '6h 40m', 'price' => '$17.50'],
-    'verity' => ['title' => 'Verity', 'author' => 'Colleen Hoover', 'rating' => 4.6, 'cover' => '../assets/images/book-covers/Verity.jpg', 'genre' => 'Thriller', 'description' => 'A tense, psychological page-turner about obsession, deception, and a writer whose manuscript may hide a terrifying truth.', 'tags' => ['Thriller', 'Suspense', 'Dark'], 'badge' => 'Trending', 'read_time' => '6h 30m', 'price' => '$19.20']
-];
+// frontend/book-details.php
+session_start();
+require_once __DIR__ . '/../backend/config/database.php';
 
-$requested = $_GET['book'] ?? $_GET['title'] ?? '';
-$requested_key = strtolower(trim((string) $requested));
-
-if ($requested_key !== '') {
-    foreach ($book_map as $slug => $book) {
-        if ($slug === $requested_key || strtolower($book['title']) === $requested_key) {
-            $book_detail = $book;
-            break;
-        }
-    }
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
 }
 
-if (!$book_detail) {
-    $book_detail = $book_map['the seven husbands of evelyn hugo'];
+$book_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Fetch book details along with author info
+$stmt = $pdo->prepare("SELECT b.*, a.name AS author_name FROM books b LEFT JOIN authors a ON b.author_id = a.id WHERE b.id = ?");
+$stmt->execute([$book_id]);
+$book = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$book) {
+    header("Location: dashboard.php");
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -31,19 +25,139 @@ if (!$book_detail) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($book_detail['title']); ?> | BookMatch</title>
+    <title><?php echo htmlspecialchars($book['title']); ?> - BookMatch</title>
     <link rel="icon" href="../assets/images/Title%20logo.svg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .details-page-wrapper {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .book-details-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        .book-details-cover img {
+            width: 100%;
+            height: 380px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .book-details-info h1 {
+            font-size: 32px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .book-details-info .author {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+        .book-details-info .author strong {
+            color: #333;
+        }
+        .rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fdf8f0;
+            color: #b7791f;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .rating-badge i {
+            color: #ecc94b;
+        }
+        .book-synopsis-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .book-details-info .description {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 25px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .back-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-color, #C18844);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        .back-nav:hover {
+            text-decoration: underline;
+        }
+        @media(max-width: 768px) {
+            .book-details-card {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            .book-details-cover img {
+                max-width: 220px;
+                margin: 0 auto;
+                display: block;
+            }
+        }
+    </style>
 </head>
 <body>
+
     <?php include '../components/navbar.php'; ?>
 
-    <main class="main-content" style="padding: 40px 20px; max-width: 1300px; margin: 0 auto;">
-        <?php include '../components/book-details.php'; ?>
+    <main class="details-page-wrapper">
+        <a href="dashboard.php" class="back-nav"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+
+        <div class="book-details-card">
+            <div class="book-details-cover">
+                <img src="../assets/images/book-covers/<?php echo htmlspecialchars($book['cover_image'] ?? $book['cover'] ?? 'placeholder.jpg'); ?>" alt="<?php echo htmlspecialchars($book['title']); ?>">
+            </div>
+            <div class="book-details-info">
+                <h1><?php echo htmlspecialchars($book['title']); ?></h1>
+                <p class="author">By <strong><?php echo htmlspecialchars($book['author_name'] ?? 'Unknown Author'); ?></strong></p>
+                
+                <div class="rating-badge">
+                    <i class="fa-solid fa-star"></i>
+                    <span><?php echo htmlspecialchars($book['rating'] ?? '4.5'); ?> / 5.0</span>
+                </div>
+
+                <div class="book-synopsis-title">About this book</div>
+                <p class="description">
+                    <?php echo nl2br(htmlspecialchars($book['description'] ?? 'Small-town romance meets a gripping storyline with deep emotional resonance and characters you will fall in love with.')); ?>
+                </p>
+
+                <div class="action-buttons">
+                    <button class="btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fa-regular fa-bookmark"></i> Save Book
+                    </button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <?php include '../components/footer.php'; ?>
+
 </body>
 </html>

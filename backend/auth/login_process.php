@@ -1,11 +1,12 @@
 <?php
-// Start session management
+// backend/auth/login_process.php
 session_start();
+require_once __DIR__ . '/../config/database.php';
 
 // Check if request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-    // Retrieve inputs
+    // Retrieve and sanitize inputs
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'] ?? '';
     $remember_me = isset($_POST['remember_me']);
@@ -23,33 +24,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // --- STATIC USER CREDENTIALS FOR TESTING ---
-    $static_email = "danikaworx@gmail.com";
-    $static_password = "123456"; // Simple plain-text check for static testing
-    $static_user = [
-        'id' => 1,
-        'username' => 'TestUser',
-        'email' => $static_email
-    ];
+    try {
+        // Fetch user from database securely using prepared statements
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Verify static credentials
-    if ($email === $static_email && $password === $static_password) {
-        
-        // Regenerate Session ID to prevent session fixation attacks
-        session_regenerate_id(true);
+        // Verify user exists and check password hash
+        if ($user && password_verify($password, $user['password'])) {
+            
+            // Regenerate Session ID to prevent session fixation attacks
+            session_regenerate_id(true);
 
-        // Set session data
-        $_SESSION['user_id'] = $static_user['id'];
-        $_SESSION['username'] = $static_user['username'];
-        $_SESSION['email'] = $static_user['email'];
-        $_SESSION['logged_in'] = true;
+            // Set session data
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['first_name'] = $user['first_name'] ?? 'Reader';
+            $_SESSION['username'] = $user['username'] ?? '';
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['logged_in'] = true;
 
-        // Redirect to user dashboard
-        header("Location: ../../frontend/dashboard.php");
-        exit();
+            // Redirect to user dashboard
+            header("Location: ../../frontend/dashboard.php");
+            exit();
 
-    } else {
-        $_SESSION['error'] = "Invalid email or password.";
+        } else {
+            $_SESSION['error'] = "Invalid email or password.";
+            header("Location: ../../frontend/login.php");
+            exit();
+        }
+
+    } catch (Exception $e) {
+        $_SESSION['error'] = "An error occurred. Please try again later.";
         header("Location: ../../frontend/login.php");
         exit();
     }

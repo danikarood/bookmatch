@@ -1,35 +1,38 @@
 <?php
-// Static Data Array with exact file names matching your book-covers folder structure
-$books_data = [
-    ["id" => 1, "title" => "My Killer Vacation", "author" => "Tessa Bailey", "genre" => "Contemporary Romance", "rating" => 4.2, "is_owned" => true, "cover" => "My killer vacation.jpg"],
-    ["id" => 2, "title" => "Consider Me", "author" => "Becka Mack", "genre" => "Sports Romance", "rating" => 4.5, "is_owned" => true, "cover" => "Consider me.jpg"],
-    ["id" => 3, "title" => "Play With Me", "author" => "Becka Mack", "genre" => "Sports Romance", "rating" => 4.4, "is_owned" => true, "cover" => "Play with me.jpg"],
-    ["id" => 4, "title" => "Unravel Me", "author" => "Becka Mack", "genre" => "Sports Romance", "rating" => 4.6, "is_owned" => true, "cover" => "Unravel me.jpg"],
-    ["id" => 5, "title" => "Fall With Me", "author" => "Becka Mack", "genre" => "Sports Romance", "rating" => 4.5, "is_owned" => true, "cover" => "Fall with me.jpg"],
-    ["id" => 6, "title" => "Breathe With Me", "author" => "Becka Mack", "genre" => "Sports Romance", "rating" => 4.7, "is_owned" => true, "cover" => "Breathe with me.jpg"],
-    ["id" => 7, "title" => "Flawless", "author" => "Elsie Silver", "genre" => "Contemporary Romance", "rating" => 4.4, "is_owned" => true, "cover" => "Flawless.jpg"],
-    ["id" => 8, "title" => "Heartless", "author" => "Elsie Silver", "genre" => "Contemporary Romance", "rating" => 4.6, "is_owned" => true, "cover" => "Heartless.jpg"],
-    ["id" => 9, "title" => "Powerless", "author" => "Elsie Silver", "genre" => "Contemporary Romance", "rating" => 4.3, "is_owned" => true, "cover" => "Powerless.jpg"],
-    ["id" => 10, "title" => "Reckless", "author" => "Elsie Silver", "genre" => "Contemporary Romance", "rating" => 4.5, "is_owned" => true, "cover" => "Reckless.jpg"],
-    ["id" => 101, "title" => "Fourth Wing", "author" => "Rebecca Yarros", "genre" => "Romantasy", "rating" => 4.8, "is_owned" => false, "cover" => "Fourth Wing.jpeg"],
-    ["id" => 102, "title" => "Iron Flame", "author" => "Rebecca Yarros", "genre" => "Romantasy", "rating" => 4.6, "is_owned" => false, "cover" => "Iron flame.jpg"],
-    ["id" => 103, "title" => "A Court of Thorns and Roses", "author" => "Sarah J. Maas", "genre" => "Romantasy", "rating" => 4.7, "is_owned" => false, "cover" => "A court of thorns & roses.jpg"],
-    ["id" => 104, "title" => "House of Earth and Blood", "author" => "Sarah J. Maas", "genre" => "Romantasy", "rating" => 4.5, "is_owned" => false, "cover" => "House of earth & blood.jpg"],
-    ["id" => 105, "title" => "The Cruel Prince", "author" => "Holly Black", "genre" => "Romantasy", "rating" => 4.2, "is_owned" => false, "cover" => "The cruel prince.jpg"],
-    ["id" => 201, "title" => "The Housemaid", "author" => "Freida McFadden", "genre" => "Thriller", "rating" => 4.5, "is_owned" => false, "cover" => "The housemaid.jpg"],
-    ["id" => 202, "title" => "Verity", "author" => "Colleen Hoover", "genre" => "Thriller", "rating" => 4.6, "is_owned" => false, "cover" => "Verity.jpg"],
-    ["id" => 203, "title" => "The Silent Patient", "author" => "Alex Michaelides", "genre" => "Thriller", "rating" => 4.4, "is_owned" => false, "cover" => "The silent patient.jpg"],
-    ["id" => 301, "title" => "Book Lovers", "author" => "Emily Henry", "genre" => "Contemporary Romance", "rating" => 4.5, "is_owned" => true, "cover" => "Book lovers.jpg"],
-    ["id" => 302, "title" => "Beach Read", "author" => "Emily Henry", "genre" => "Contemporary Romance", "rating" => 4.3, "is_owned" => true, "cover" => "Beach read.jpg"]
-];
+// frontend/dashboard.php
+session_start();
+require_once __DIR__ . '/../backend/config/database.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$firstName = $_SESSION['first_name'] ?? 'Reader';
+
+// Fetch all books joined with the authors table to get the author's name
+$stmt = $pdo->query("SELECT b.*, a.name AS author_name FROM books b LEFT JOIN authors a ON b.author_id = a.id");
+$all_books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Strictly filter: Only keep books where the numerical rating is 3.5 or higher
+$books_data = array_filter($all_books, function($b) {
+    $rating = isset($b['rating']) ? floatval($b['rating']) : 0;
+    return $rating >= 3.5;
+});
+
+// Safely collect hidden books (< 3.5 rating) for the hidden library
+$hidden_library = array_filter($all_books, function($b) {
+    $rating = isset($b['rating']) ? floatval($b['rating']) : 0;
+    return $rating > 0 && $rating < 3.5;
+});
 
 $total_books = count($books_data);
-$saved_reads = 12; 
-$owned_count = count(array_filter($books_data, fn($b) => $b['is_owned']));
 $recent_books = $books_data;
 
+// Filter categories dynamically using database column data (only from visible books)
 $booktok_books = array_filter($books_data, fn($b) => in_array($b['title'], ["Fourth Wing", "Iron Flame", "Heartless", "Verity", "The Housemaid"]));
-$community_picks = array_filter($books_data, fn($b) => $b['rating'] >= 4.6);
+$community_picks = array_filter($books_data, fn($b) => floatval($b['rating'] ?? 0) >= 4.6);
 
 $newsletter_status = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
@@ -46,13 +49,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookMatch</title>
+    <title>Dashboard - BookMatch</title>
     <link rel="icon" href="../assets/images/Title%20logo.svg" type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Netflix-style horizontal row scrolling layout without visible scrollbars */
         .shelf-section {
             padding: 0 40px;
             margin-bottom: 40px;
@@ -73,25 +75,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
             overflow-x: auto;
             scroll-behavior: smooth;
             padding-bottom: 15px;
-            /* Hide scrollbar for clean UI while keeping it scrollable */
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
         .book-row-netflix::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
+            display: none;
         }
         .book-row-netflix .book-card, 
         .book-row-netflix > div {
             flex: 0 0 200px;
             max-width: 200px;
         }
-        
-        /* Fix book card image sizing so covers fit properly */
         .book-card img, .book-row-netflix img, .book-row img {
             width: 100%;
             height: 280px;
             object-fit: cover;
             border-radius: 8px;
+        }
+        .book-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .book-card h4 {
+            font-size: 15px;
+            margin: 10px 0 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-card p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .btn-view-details {
+            display: block;
+            text-align: center;
+            background: transparent;
+            border: 1px solid var(--primary-color, #C18844);
+            color: var(--primary-color, #C18844);
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .btn-view-details:hover {
+            background: var(--primary-color, #C18844);
+            color: #fff;
         }
     </style>
 </head>
@@ -100,17 +137,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
     <!-- Include Modular Navbar -->
     <?php include '../components/navbar.php'; ?>
 
-    <!-- Main Container -->
+    <main class="py-4">
 
         <!-- Hero Section with Asset 1 Background -->
         <section class="hero-section">
             <div class="hero-bg-img" style="background-image: url('../assets/images/Top-left hero background..jpg');"></div>
             <div class="hero-content">
-                <h1>Find the Story<br>That's Meant For You.</h1>
+                <h1>Find the Story<br>That's Meant For You, <?php echo htmlspecialchars($firstName); ?>.</h1>
                 <p>Answer a few questions about your mood, tastes and interests and let BookMatch find your perfect next read from thousands of books and real readers.</p>
                 <div class="hero-buttons">
                     <button class="btn-primary" onclick="window.location.href='quizzes.php'"><i class="fa-solid fa-wand-magic-sparkles"></i> Find My Match</button>
-                    <button class="btn-secondary">Browse Books</button>
+                    <button class="btn-secondary" onclick="window.scrollTo({top: 600, behavior: 'smooth'});">Browse Books</button>
                 </div>
             </div>
             <div class="hero-recommendation-card">
@@ -144,18 +181,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
         <section class="shelf-section">
             <div class="shelf-header">
                 <h3>Today's Picks (Total Library: <?php echo $total_books; ?> books)</h3>
-               <a href="book.php?category=todays_picks" class="view-all">View all</a>
+                <a href="book.php?category=todays_picks" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
-                <?php 
-                foreach($recent_books as $b) {
-                    $title = $b['title']; 
-                    $author = $b['author']; 
-                    $rating = $b['rating']; 
-                    $image = '../assets/images/book-covers/' . $b['cover'];
-                    include '../components/book-card.php';
-                }
-                ?>
+                <?php foreach($recent_books as $b): ?>
+                    <div class="book-card">
+                        <div>
+                            <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover_image'] ?? $b['cover'] ?? 'placeholder.jpg'); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>">
+                            <h4><?php echo htmlspecialchars($b['title']); ?></h4>
+                            <p>By <?php echo htmlspecialchars($b['author_name'] ?? 'Unknown Author'); ?></p>
+                        </div>
+                        <a href="book-details.php?id=<?php echo $b['id']; ?>" class="btn-view-details">View Details</a>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </section>
 
@@ -166,15 +204,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                 <a href="book.php?category=booktok" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
-                <?php 
-                foreach($booktok_books as $b) {
-                    $title = $b['title']; 
-                    $author = $b['author']; 
-                    $rating = $b['rating']; 
-                    $image = '../assets/images/book-covers/' . $b['cover'];
-                    include '../components/book-card.php';
-                }
-                ?>
+                <?php foreach($booktok_books as $b): ?>
+                    <div class="book-card">
+                        <div>
+                            <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover_image'] ?? $b['cover'] ?? 'placeholder.jpg'); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>">
+                            <h4><?php echo htmlspecialchars($b['title']); ?></h4>
+                            <p>By <?php echo htmlspecialchars($b['author_name'] ?? 'Unknown Author'); ?></p>
+                        </div>
+                        <a href="book-details.php?id=<?php echo $b['id']; ?>" class="btn-view-details">View Details</a>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </section>
 
@@ -185,41 +224,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                 <a href="book.php?category=community_picks" class="view-all">View all</a>
             </div>
             <div class="book-row-netflix">
-                <?php 
-                foreach($community_picks as $b) {
-                    $title = $b['title']; 
-                    $author = $b['author']; 
-                    $rating = $b['rating']; 
-                    $image = '../assets/images/book-covers/' . $b['cover'];
-                    include '../components/book-card.php';
-                }
-                ?>
+                <?php foreach($community_picks as $b): ?>
+                    <div class="book-card">
+                        <div>
+                            <img src="../assets/images/book-covers/<?php echo htmlspecialchars($b['cover_image'] ?? $b['cover'] ?? 'placeholder.jpg'); ?>" alt="<?php echo htmlspecialchars($b['title']); ?>">
+                            <h4><?php echo htmlspecialchars($b['title']); ?></h4>
+                            <p>By <?php echo htmlspecialchars($b['author_name'] ?? 'Unknown Author'); ?></p>
+                        </div>
+                        <a href="book-details.php?id=<?php echo $b['id']; ?>" class="btn-view-details">View Details</a>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </section>
 
-        <!-- Browse by Genre -->
+        <!-- Browse by Genre (Linked to primary genres) -->
         <section class="shelf-section">
             <div class="shelf-header">
                 <h3>Browse by Genre</h3>
-                <a href="#" class="view-all">View all</a>
+                <a href="book.php" class="view-all">View all</a>
             </div>
             <div class="mood-row">
-                <div class="mood-card">
+                <a href="book.php?primary_genre=Romance" class="mood-card text-decoration-none">
                     <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=300&q=80" alt="Romance">
-                    <span>Contemporary Romance</span>
-                </div>
-                <div class="mood-card">
+                    <span>Romance</span>
+                </a>
+                <a href="book.php?primary_genre=Romantasy" class="mood-card text-decoration-none">
                     <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80" alt="Romantasy">
-                    <span>Romantasy & Fantasy</span>
-                </div>
-                <div class="mood-card">
+                    <span>Romantasy</span>
+                </a>
+                <a href="book.php?primary_genre=Thriller" class="mood-card text-decoration-none">
                     <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=300&q=80" alt="Thriller">
                     <span>Mystery & Thriller</span>
-                </div>
-                <div class="mood-card">
-                    <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=300&q=80" alt="Sports">
-                    <span>Sports Romance</span>
-                </div>
+                </a>
+                <a href="book.php?primary_genre=Fantasy" class="mood-card text-decoration-none">
+                    <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=300&q=80" alt="Fantasy">
+                    <span>Fantasy</span>
+                </a>
             </div>
         </section>
 

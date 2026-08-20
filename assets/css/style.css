@@ -3029,7 +3029,8 @@ body {
 }
 
 .form-group input[type="text"],
-.form-group textarea {
+.form-group textarea,
+.form-group input[type="file"] {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid #d1c7bc;
@@ -3042,6 +3043,17 @@ body {
 .form-group textarea {
     resize: vertical;
     height: 70px;
+}
+
+.form-group input[type="file"] {
+    cursor: pointer;
+}
+
+.form-group small {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    margin-top: 5px;
 }
 
 .modal-actions {

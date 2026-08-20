@@ -10,7 +10,12 @@ $user_profile = [
     "book_reviews" => 28,
     "streak_days" => 28
 ];
-
+// Check for session messages
+session_start();
+$success_message = isset($_SESSION['success']) ? $_SESSION['success'] : '';
+$error_message = isset($_SESSION['error']) ? $_SESSION['error'] : '';
+unset($_SESSION['success']);
+unset($_SESSION['error']);
 $currently_reading = [
     "title" => "The Song of Achilles",
     "author" => "Madeline Miller",
@@ -60,6 +65,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
     <!-- Include Modular Navbar -->
     <?php include '../components/navbar.php'; ?>
 
+    <!-- Success/Error Messages -->
+    <?php if (!empty($success_message)): ?>
+        <div class="alert alert-success" style="margin: 20px; padding: 15px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
+            <?php echo htmlspecialchars($success_message); ?>
+        </div>
+    <?php endif; ?>
+    <?php if (!empty($error_message)): ?>
+        <div class="alert alert-error" style="margin: 20px; padding: 15px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24;">
+            <?php echo htmlspecialchars($error_message); ?>
+        </div>
+    <?php endif; ?>
+
     <!-- Main Container -->
     <main class="main-content library-page">
 
@@ -71,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                 <div class="profile-card">
                     <div class="avatar-container">
                         <img src="<?php echo htmlspecialchars($user_profile['avatar']); ?>" alt="<?php echo htmlspecialchars($user_profile['name']); ?>" class="profile-avatar">
-                        <button class="avatar-edit-btn"><i class="fa-solid fa-pen"></i></button>
+                        <button type="button" class="avatar-edit-btn" id="avatarEditBtn"><i class="fa-solid fa-pen"></i></button>
                     </div>
                     <h2><?php echo htmlspecialchars($user_profile['name']); ?></h2>
                     <span class="handle"><?php echo htmlspecialchars($user_profile['handle']); ?></span>
@@ -93,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                     </div>
 
                     <div class="profile-actions">
-                        <a href="#" class="btn-primary-block">Edit Profile</a>
+                        <button type="button" class="btn-primary-block" id="editProfileBtn">Edit Profile</button>
                         <a href="#" class="btn-settings"><i class="fa-solid fa-gear"></i></a>
                     </div>
                 </div>
@@ -468,18 +485,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
             <h3>Edit Profile</h3>
             <button type="button" class="modal-close-btn" id="closeModalBtn">&times;</button>
         </div>
-        <form id="editProfileForm" action="update-profile.php" method="POST" enctype="multipart/form-data">
+        <form id="editProfileForm" action="../../backend/user/update-profile.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="editName">Name</label>
-                <input type="text" id="editName" name="name" value="Danika Rood">
+                <input type="text" id="editName" name="name" value="<?php echo htmlspecialchars($user_profile['name']); ?>" required>
             </div>
             <div class="form-group">
                 <label for="editBio">Bio / Favorite Quote</label>
-                <textarea id="editBio" name="bio">"There is no friend as loyal as a book."</textarea>
+                <textarea id="editBio" name="bio" required><?php echo htmlspecialchars($user_profile['bio']); ?></textarea>
             </div>
             <div class="form-group">
                 <label for="editAvatar">Profile Picture</label>
-                <input type="file" id="editAvatar" name="avatar">
+                <input type="file" id="editAvatar" name="avatar" accept="image/*">
+                <small>Supported formats: JPG, PNG, GIF, WEBP (Max 5MB)</small>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-secondary" id="cancelModalBtn">Cancel</button>
@@ -493,5 +511,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
     <?php include '../components/footer.php'; ?>
 
     <script src="../assets/js/main.js"></script>
+    <script>
+        // Profile Edit Modal Handler
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const avatarEditBtn = document.getElementById('avatarEditBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const editProfileModal = document.getElementById('editProfileModal');
+        const editAvatarInput = document.getElementById('editAvatar');
+
+        // Open modal when Edit Profile button is clicked
+        if (editProfileBtn) {
+            editProfileBtn.addEventListener('click', function() {
+                editProfileModal.style.display = 'flex';
+            });
+        }
+
+        // Open modal when avatar edit button is clicked
+        if (avatarEditBtn) {
+            avatarEditBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                editAvatarInput.click();
+            });
+        }
+
+        // Close modal when close button is clicked
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', function() {
+                editProfileModal.style.display = 'none';
+            });
+        }
+
+        // Close modal when cancel button is clicked
+        if (cancelModalBtn) {
+            cancelModalBtn.addEventListener('click', function() {
+                editProfileModal.style.display = 'none';
+            });
+        }
+
+        // Close modal when clicking outside of it
+        editProfileModal.addEventListener('click', function(event) {
+            if (event.target === editProfileModal) {
+                editProfileModal.style.display = 'none';
+            }
+        });
+
+        // Show file name when a file is selected
+        editAvatarInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const fileName = this.files[0].name;
+                const fileSize = (this.files[0].size / 1024 / 1024).toFixed(2);
+                console.log('File selected: ' + fileName + ' (' + fileSize + 'MB)');
+            }
+        });
+    </script>
 </body>
 </html>
